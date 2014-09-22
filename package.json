@@ -31,7 +31,7 @@
   "main": "./lib",
   "dependencies": {
     "passport-strategy": "1.x.x",
-    "node-xmpp-client": "^1.0.0-alpha7"
+    "node-xmpp-client": "~1.0.0-alpha7"
   },
   "devDependencies": {
     "mocha": "1.x.x",
