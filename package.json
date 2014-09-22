@@ -31,7 +31,8 @@
   "main": "./lib",
   "dependencies": {
     "passport-strategy": "1.x.x",
-    "node-xmpp-client": "~1.0.0-alpha7"
+    "node-xmpp-client": "~1.0.0-alpha7",
+    "debug": "^2.0.0"
   },
   "devDependencies": {
     "mocha": "1.x.x",
@@ -43,6 +44,6 @@
     "node": ">= 0.4.0"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha --reporter spec --timeout 5000 --require test/bootstrap/node test/*.test.js"
+    "test": "node_modules/.bin/mocha --reporter spec --require test/bootstrap/node test/*.test.js"
   }
 }

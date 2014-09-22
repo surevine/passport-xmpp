@@ -2,7 +2,8 @@
 /* jshint expr: true */
 
 var chai = require('chai')
-  , Strategy = require('../lib/strategy');
+  , Strategy = require('../lib/strategy')
+  , server = require('./bootstrap/xmpp-server');
 
 
 describe('Strategy', function() {
@@ -15,17 +16,23 @@ describe('Strategy', function() {
     var info, status;
     
     before(function(done) {
-      chai.passport(strategy)
-        .fail(function(i, s) {
-          info = i;
-          status = s;
-          done();
+      server.startServer(function() {
+          chai.passport(strategy)
+            .fail(function(i, s) {
+              info = i;
+              status = s;
+              done();
+            })
+            .req(function(req) {
+              req.body = {};
+            })
+            .authenticate({ badRequestMessage: 'Something is wrong with this request' });
         })
-        .req(function(req) {
-          req.body = {};
-        })
-        .authenticate({ badRequestMessage: 'Something is wrong with this request' });
     });
+        
+    after(function(done) {
+        server.stopServer(done);
+    })
     
     it('should fail with info and status', function() {
       expect(info).to.be.an.object;

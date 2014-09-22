@@ -2,51 +2,45 @@
 /* jshint expr: true */
 
 var chai = require('chai')
-  , Strategy = require('../lib/strategy');
+  , Strategy = require('../lib/strategy')
+  , server = require('./bootstrap/xmpp-server');
 
 describe('Strategy', function() {
     
   describe('passing request to verify callback', function() {
-    var strategy = new Strategy({ passReqToCallback: true }, function(req, jid, password, done) {
-      if ((jid === 'johndoe@example.com') && (password === 'secret')) {
-        return done(null, { id: '1234' }, { scope: 'read', foo: req.headers['x-foo'] });
-      }
-      return done(null, false);
-    });
+    var strategy = new Strategy({});
     
     var user
       , info;
     
     before(function(done) {
-      chai.passport(strategy)
-        .success(function(u, i) {
-          user = u;
-          info = i;
-          done();
-        })
-        .req(function(req) {
-          req.headers['x-foo'] = 'hello';
-          
-          req.body = {};
-          req.body.jid = 'johndoe@example.com';
-          req.body.password = 'secret';
-        })
-        .authenticate();
+      server.startServer(function() {
+          chai.passport(strategy)
+            .success(function(u) {
+              user = u;
+              done();
+            })
+            .req(function(req) {
+              req.body = {};
+              req.body.jid = 'johndoe@localhost';
+              req.body.password = 'secret';
+            })
+            .authenticate();
+      })
     });
+      
+    after(function(done) {
+      server.stopServer(done)
+    })
     
     it('should supply user', function() {
       expect(user).to.be.an.object;
-      expect(user.id).to.equal('1234');
+      expect(user.local).to.equal('johndoe');
+      expect(user.user).to.equal('johndoe');
+      expect(user.domain).to.equal('localhost');
+      expect(user.resource).to.exist;
     });
-    
-    it('should supply info', function() {
-      expect(info).to.be.an.object;
-      expect(info.scope).to.equal('read');
-    });
-    
-    it('should supply request header in info', function() {
-      expect(info.foo).to.equal('hello');
-    });
+
   });
   
 });

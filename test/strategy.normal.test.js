@@ -2,101 +2,103 @@
 /* jshint expr: true */
 
 var chai = require('chai')
-  , Strategy = require('../lib/strategy');
+  , Strategy = require('../lib/strategy')
+  , server = require('./bootstrap/xmpp-server');
 
 
 describe('Strategy', function() {
-    
+
   describe('handling a request with valid credentials in body', function() {
-    var strategy = new Strategy(function(jid, password, done) {
-      if ((jid == 'johndoe@example.com') && (password === 'secret')) {
-        return done(null, { id: '1234' }, { scope: 'read' });
-      }
-      return done(null, false);
-    });
+    var strategy = new Strategy();
     
     var user
       , info;
     
     before(function(done) {
-      chai.passport(strategy)
-        .success(function(u, i) {
-          user = u;
-          info = i;
-          done();
-        })
-        .req(function(req) {
-          req.body = {};
-          req.body.jid = 'johndoe@example.com';
-          req.body.password = 'secret';
-        })
-        .authenticate();
+      server.startServer(function() {
+          chai.passport(strategy)
+            .success(function(u) {
+              user = u;
+              done();
+            })
+            .req(function(req) {
+              req.body = {};
+              req.body.jid = 'johndoe@localhost';
+              req.body.password = 'secret';
+            })
+            .authenticate();
+        });
     });
+      
+    after(function(done) {
+      server.stopServer(done);
+    })
     
     it('should supply user', function() {
       expect(user).to.be.an.object;
-      expect(user.id).to.equal('1234');
+      expect(user.local).to.equal('johndoe');
+      expect(user.user).to.equal('johndoe');
+      expect(user.domain).to.equal('localhost');
+      expect(user.resource).to.exist;
     });
-    
-    it('should supply info', function() {
-      expect(info).to.be.an.object;
-      expect(info.scope).to.equal('read');
-    });
+      
   });
   
   describe('handling a request with valid credentials in query', function() {
-    var strategy = new Strategy(function(jid, password, done) {
-      if ((jid === 'johndoe@example.com') && (password === 'secret')) {
-        return done(null, { id: '1234' }, { scope: 'read' });
-      }
-      return done(null, false);
-    });
+    var strategy = new Strategy();
     
     var user
       , info;
     
     before(function(done) {
-      chai.passport(strategy)
-        .success(function(u, i) {
-          user = u;
-          info = i;
-          done();
-        })
-        .req(function(req) {
-          req.query = {};
-          req.query.jid = 'johndoe@example.com';
-          req.query.password = 'secret';
-        })
-        .authenticate();
+      server.startServer(function() {
+          chai.passport(strategy)
+            .success(function(u, i) {
+              user = u;
+              done();
+            })
+            .req(function(req) {
+              req.query = {};
+              req.query.jid = 'johndoe@localhost';
+              req.query.password = 'secret';
+            })
+            .authenticate();
+        });
     });
+      
+    after(function(done) {
+      server.stopServer(done);
+    })
     
     it('should supply user', function() {
       expect(user).to.be.an.object;
-      expect(user.id).to.equal('1234');
-    });
-    
-    it('should supply info', function() {
-      expect(info).to.be.an.object;
-      expect(info.scope).to.equal('read');
+      expect(user.local).to.equal('johndoe');
+      expect(user.user).to.equal('johndoe');
+      expect(user.domain).to.equal('localhost');
+      expect(user.resource).to.exist;
     });
   });
   
   describe('handling a request without a body', function() {
-    var strategy = new Strategy(function(jid, password, done) {
-      throw new Error('should not be called');
-    });
+    var strategy = new Strategy();
     
     var info, status;
     
     before(function(done) {
-      chai.passport(strategy)
-        .fail(function(i, s) {
-          info = i;
-          status = s;
-          done();
-        })
-        .authenticate();
+      server.startServer(function() {
+          chai.passport(strategy)
+            .fail(function(i, s) {
+              info = i;
+              status = s;
+              done();
+            })
+            .authenticate();
+      });
     });
+      
+    after(function(done) {
+        server.stopServer(done);
+    })
     
     it('should fail with info and status', function() {
       expect(info).to.be.an.object;
@@ -106,24 +108,28 @@ describe('Strategy', function() {
   });
   
   describe('handling a request without a body, but no jid and password', function() {
-    var strategy = new Strategy(function(jid, password, done) {
-      throw new Error('should not be called');
-    });
+    var strategy = new Strategy({});
     
     var info, status;
     
     before(function(done) {
-      chai.passport(strategy)
-        .fail(function(i, s) {
-          info = i;
-          status = s;
-          done();
-        })
-        .req(function(req) {
-          req.body = {};
-        })
-        .authenticate();
+      server.startServer(function() {
+          chai.passport(strategy)
+            .fail(function(i, s) {
+              info = i;
+              status = s;
+              done();
+            })
+            .req(function(req) {
+              req.body = {};
+            })
+            .authenticate();
+      });
     });
+      
+    after(function(done) {
+        server.stopServer(done);
+    })
     
     it('should fail with info and status', function() {
       expect(info).to.be.an.object;
@@ -133,9 +139,7 @@ describe('Strategy', function() {
   });
   
   describe('handling a request without a body, but no password', function() {
-    var strategy = new Strategy(function(jid, password, done) {
-      throw new Error('should not be called');
-    });
+    var strategy = new Strategy();
     
     var info, status;
     
@@ -148,7 +152,7 @@ describe('Strategy', function() {
         })
         .req(function(req) {
           req.body = {};
-          req.body.jid = 'johndoe@example.com';
+          req.body.jid = 'johndoe@localhost';
         })
         .authenticate();
     });
