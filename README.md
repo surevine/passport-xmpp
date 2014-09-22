@@ -17,6 +17,8 @@ __Note:__ This strategy isn't recommended for use unless:
 * Users are able and willing to trust your service
 * Users are using a SASL authentication mechanism that does not involve them revealing their true password
 
+We don't currently support setting a SASL mechanism but pieces are in place, if required please raise an issue and we'll finish off the code. Thanks!
+
 ## Install
 
     $ npm install passport-xmpp
