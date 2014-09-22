@@ -54,6 +54,8 @@ application:
   - [Lloyd Watkin](http://github.com/lloydwatkin)
   - [Surevine](http://www.surevine.com)
 
+This module has been highly influenced by [passport-local](https://github.com/jaredhanson/passport-local) by [Jared Hanson](https://github.com/jaredhanson).
+
 ## License
 
 [The MIT License](http://opensource.org/licenses/MIT)
