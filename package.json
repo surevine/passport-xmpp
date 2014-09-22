@@ -37,12 +37,12 @@
     "mocha": "1.x.x",
     "chai": "1.x.x",
     "chai-passport-strategy": "0.1.x",
-    "node-xmpp-server": "^1.0.0-alpha5"
+    "node-xmpp-server": "~1.0.0-alpha5"
   },
   "engines": {
     "node": ">= 0.4.0"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha --reporter spec --require test/bootstrap/node test/*.test.js"
+    "test": "node_modules/.bin/mocha --reporter spec --timeout 5000 --require test/bootstrap/node test/*.test.js"
   }
 }
