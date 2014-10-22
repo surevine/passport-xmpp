@@ -1,6 +1,6 @@
 {
   "name": "passport-xmpp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "XMPP authentication strategy for Passport.",
   "keywords": [
     "passport",
