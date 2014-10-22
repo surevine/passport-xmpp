@@ -31,7 +31,7 @@
   "main": "./lib",
   "dependencies": {
     "passport-strategy": "1.x.x",
-    "node-xmpp-client": "~1.0.0-alpha7",
+    "node-xmpp-client": "~1.0.0-alpha15",
     "debug": "^2.0.0",
     "connect-flash": "^0.1.1"
   },
@@ -39,7 +39,7 @@
     "chai": "1.x.x",
     "chai-passport-strategy": "0.1.x",
     "mocha": "1.x.x",
-    "node-xmpp-server": "~1.0.0-alpha5",
+    "node-xmpp-server": "~1.0.0-alpha11",
     "proxyquire": "^1.0.1"
   },
   "engines": {
